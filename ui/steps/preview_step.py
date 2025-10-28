@@ -7,7 +7,7 @@ from services.io_loader import load_table
 from widgets.dataframe_table import DataFrameTable
 
 
-class PreviewStep(ttk.Frame):
+class GetDataStep(ttk.Frame):
     def __init__(self, master):
         super().__init__(master, padding=8)
         self.on_status = None
@@ -84,7 +84,6 @@ class PreviewStep(ttk.Frame):
         else:
             self.btn_prev.config(state="normal" if self.page_idx > 0 else "disabled")
             self.btn_next.config(state="normal" if end < total else "disabled")
-
 
     def _prev_page(self):
         if self.df is None:

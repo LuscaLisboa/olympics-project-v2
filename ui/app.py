@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 
-from ui.steps.preview_step import PreviewStep
+import pandas
+
+from ui.steps.preview_step import GetDataStep
+from ui.steps.statistics_step import StatisticsStep
 
 
 class App:
@@ -19,5 +22,9 @@ class App:
         self.nb = ttk.Notebook(container)
         self.nb.pack(fill="both", expand=True)
 
-        self.step1 = PreviewStep(self.nb)
+        self.step1 = GetDataStep(self.nb)
         self.nb.add(self.step1, text="1 - View File")
+
+        self.step2 = StatisticsStep(self.nb, self.step1.df if self.step1.df else pandas.DataFrame(), self.step1.file_label_var)
+        self.nb.add(self.step2, text="2 - Statistics")
+
