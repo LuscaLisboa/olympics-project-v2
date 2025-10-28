@@ -34,7 +34,7 @@ class DataFrameTable(ttk.Frame):
         self.tree["columns"] = columns
         for col in columns:
             self.tree.heading(col, text=col)
-            self.tree.column(col, width=min(max(80, len(col)*10), 400), stretch=True, anchor="w")
+            self.tree.column(col, width=min(max(80, len(col) * 10), 400), stretch=True, anchor="w")
 
         if not df.empty:
             values_iter = df.itertuples(index=False, name=None)

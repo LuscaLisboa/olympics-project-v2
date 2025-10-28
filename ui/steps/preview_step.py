@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+from typing import Optional, Callable
 
 import pandas as pd
 
@@ -14,6 +15,7 @@ class GetDataStep(ttk.Frame):
         self.df: pd.DataFrame | None = None
         self.page_idx = 0
         self.page_size = 500
+        self.on_data_loaded: Optional[Callable[[pd.DataFrame, dict], None]] = None
 
         self._build()
 
@@ -53,6 +55,8 @@ class GetDataStep(ttk.Frame):
             self.file_label_var.set(f"File: {meta['name']}  •  Rows: {meta['rows']}  •  Columns: {meta['cols']}")
             self.page_idx = 0
             self._render_page()
+            if self.on_data_loaded:
+                self.on_data_loaded(self.df, meta)
             self._notify("Loading successfully")
         except Exception as e:
             messagebox.showerror("Error while opening", str(e))

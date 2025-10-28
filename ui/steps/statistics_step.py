@@ -18,7 +18,7 @@ def _calc():
 
 
 class StatisticsStep(ttk.Frame):
-    def __init__(self, parent, df: pd.DataFrame, label, *args, **kwargs):
+    def __init__(self, parent, df: pd.DataFrame | None, label, *args, **kwargs):
         super().__init__(parent, *args, **kwargs, padding=8)
 
         if not isinstance(label, tk.StringVar):
@@ -26,10 +26,16 @@ class StatisticsStep(ttk.Frame):
         self.label = label
 
         self.on_status = None
-        self.df: pd.DataFrame = df
+        self.df: pd.DataFrame = df if df is not None else pd.DataFrame()
         self.tabs_by_calc: dict[str, ttk.Frame] = {}
+        self._calcs = _calc()
 
         self._build()
+        self.update_dataframe(self.df)
+
+    def _notify(self, msg: str):
+        if self.on_status:
+            self.on_status(msg)
 
     def _build(self):
         top = ttk.Frame(self)
@@ -45,11 +51,28 @@ class StatisticsStep(ttk.Frame):
 
         self._notify(f"{len(self.df.columns)} columns loaded.")
 
-    def _notify(self, msg: str):
-        if self.on_status:
-            self.on_status(msg)
+    def update_dataframe(self, df: pd.DataFrame | None):
+        self.df = df if df is not None else pd.DataFrame()
 
+        for tab_id in self.nb.tabs():
+            self.nb.forget(tab_id)
+        self.tabs_by_calc.clear()
 
+        if self.df.empty or len(self.df.columns) == 0:
+            frame = ttk.Frame(self.nb, padding=16)
+            ttk.Label(
+                frame,
+                text="Load a file in Step 1 to view available columns.",
+                anchor="center",
+                justify="center",
+            ).pack(expand=True)
+            self.nb.add(frame, text="Info")
+            self._notify("No data loaded.")
+            return
+        for calc in self._calcs:
+            self._build_calc_sheet(calc, self.df.columns)
+
+        self._notify(f"{len(self.df.columns)} columns loaded.")
 
     def _build_calc_sheet(self, calc_name: str, df_columns):
         frame = ttk.Frame(self.nb, padding=8)
@@ -59,8 +82,7 @@ class StatisticsStep(ttk.Frame):
         cards = ttk.Frame(frame)
         cards.pack(fill="x", pady=(8, 0))
 
-        # layout responsivo (3 colunas)
-        for i in range(3):
+        for i in range(len(df_columns)):
             cards.grid_columnconfigure(i, weight=1)
 
         cards_specs = []
@@ -68,7 +90,7 @@ class StatisticsStep(ttk.Frame):
             cards_specs.append((col, "—"))
 
         for idx, col in enumerate(df_columns):
-            r, c = divmod(idx, 3)
+            r, c = divmod(idx, len(df_columns))
             lf = ttk.LabelFrame(cards, text=col, padding=10)
             lf.grid(row=r, column=c, sticky="nsew", padx=6, pady=6)
             ttk.Label(lf, text="—", font=("Segoe UI", 14, "bold")).grid(

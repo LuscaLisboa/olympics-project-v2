@@ -25,6 +25,13 @@ class App:
         self.step1 = GetDataStep(self.nb)
         self.nb.add(self.step1, text="1 - View File")
 
-        self.step2 = StatisticsStep(self.nb, self.step1.df if self.step1.df else pandas.DataFrame(), self.step1.file_label_var)
+        self.step2 = StatisticsStep(
+            self.nb,
+            self.step1.df if self.step1.df is not None else pandas.DataFrame(),
+            self.step1.file_label_var,
+        )
         self.nb.add(self.step2, text="2 - Statistics")
+        self.step1.on_data_loaded = self._on_data_loaded
 
+    def _on_data_loaded(self, df: pandas.DataFrame, _meta: dict):
+        self.step2.update_dataframe(df)
