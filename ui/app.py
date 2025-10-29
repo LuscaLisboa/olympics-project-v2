@@ -4,7 +4,7 @@ from tkinter import ttk
 import pandas
 
 from ui.steps.preview_step import GetDataStep
-from ui.steps.statistics_step import StatisticsStep
+from ui.steps.statistical_step import StatisticsStep
 
 
 class App:

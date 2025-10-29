@@ -3,6 +3,8 @@ from tkinter import ttk
 
 import pandas as pd
 
+from services.statistical_calc import total_calc, average_calc
+
 
 def _calc():
     return [
@@ -82,17 +84,22 @@ class StatisticsStep(ttk.Frame):
         cards = ttk.Frame(frame)
         cards.pack(fill="x", pady=(8, 0))
 
-        for i in range(len(df_columns)):
+        grid_length = 5
+        for i in range(grid_length):
             cards.grid_columnconfigure(i, weight=1)
 
-        cards_specs = []
-        for col in df_columns:
-            cards_specs.append((col, "—"))
+        results = {}
+        match calc_name:
+            case "Total":
+                results = total_calc(self.df)
+            case "Average":
+                results = average_calc(self.df)
 
         for idx, col in enumerate(df_columns):
-            r, c = divmod(idx, len(df_columns))
+            r, c = divmod(idx, grid_length)
             lf = ttk.LabelFrame(cards, text=col, padding=10)
             lf.grid(row=r, column=c, sticky="nsew", padx=6, pady=6)
-            ttk.Label(lf, text="—", font=("Segoe UI", 14, "bold")).grid(
-                row=0, column=0, sticky="nsew"
-            )
+            if col in results:
+                ttk.Label(lf, text=results[col], font=("Segoe UI", 14, "bold")).grid(
+                    row=0, column=0, sticky="nsew"
+                )
