@@ -4,6 +4,7 @@ import os
 
 import pandas as pd
 
+
 def load_table(file_path: str, sample_rows: int | None = None) -> tuple[pd.DataFrame, dict]:
     """Load .xlsx, .xls or .csv into a DataFrame.
     - If sample_rows is not None, returns only head(sample_rows).

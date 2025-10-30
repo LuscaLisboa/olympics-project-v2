@@ -1,10 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
+from typing import Any
 
 import pandas as pd
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from services.statistical_calc import total_calc, average_calc, mode_calc, variance_calc, std_deviation_calc, \
-    covariance_calc, correlation_calc, median_calc
+from services.statistical_calc import (
+    average_calc,
+    correlation_calc,
+    covariance_calc,
+    median_calc,
+    mode_calc,
+    std_deviation_calc,
+    total_calc,
+    variance_calc,
+)
+from services.statistical_plot import total_plot, histogram_plot
 
 
 def _calc():
@@ -43,7 +54,7 @@ class StatisticsStep(ttk.Frame):
     def _build(self):
         top = ttk.Frame(self)
         top.pack(fill="x", pady=(0,8))
-        ttk.Label(top, textvariable=self.label, style="Info.Label").pack(side="left", padx=12)
+        ttk.Label(top, textvariable=self.label, style="Info.TLabel").pack(side="left", padx=12)
 
         self.nb = ttk.Notebook(self, style="TNotebook")
         self.nb.pack(fill="both", expand=True)
@@ -70,7 +81,7 @@ class StatisticsStep(ttk.Frame):
             self._notify("No data loaded.")
             return
 
-        numeric_df = self.df.select_dtypes(include="number")
+        numeric_df = self.df.select_dtypes(include="number").drop(columns="ID")
         numeric_columns = list(numeric_df.columns)
 
         if len(numeric_columns) == 0:
@@ -87,35 +98,44 @@ class StatisticsStep(ttk.Frame):
             self._notify("No numeric data available.")
             return
 
-        calc_results: dict[str, dict[str, float]] = {}
+        calc_results: dict[str, Any] = {}
+        plot_fig: any = {}
         for calc in self._calcs:
             match calc:
                 case "Total":
                     calc_results[calc] = total_calc(numeric_df)
+                    plot_fig[calc] = total_plot(numeric_df)
                 case "Average":
                     calc_results[calc] = average_calc(numeric_df)
+                    plot_fig[calc] = histogram_plot(numeric_df)
                 case "Median":
                     calc_results[calc] = median_calc(numeric_df)
+                    plot_fig[calc] = {}
                 case "Mode":
                     calc_results[calc] = mode_calc(numeric_df)
+                    plot_fig[calc] = {}
                 case "Variance":
                     calc_results[calc] = variance_calc(numeric_df)
+                    plot_fig[calc] = {}
                 case "Standard Deviation":
                     calc_results[calc] = std_deviation_calc(numeric_df)
+                    plot_fig[calc] = {}
                 case "Covariance":
                     calc_results[calc] = covariance_calc(numeric_df)
+                    plot_fig[calc] = {}
                 case "Correlation":
                     calc_results[calc] = correlation_calc(numeric_df)
+                    plot_fig[calc] = {}
                 case _:
                     calc_results[calc] = {}
 
         for calc in self._calcs:
-            self._build_calc_sheet(calc, numeric_columns, calc_results.get(calc, {}))
+            self._build_calc_sheet(calc, numeric_columns, calc_results.get(calc, {}), plot_fig)
 
         self._notify(f"{len(numeric_columns)} numeric columns loaded.")
 
     @staticmethod
-    def _format_result(value):
+    def _format_result(value: Any) -> str:
         if isinstance(value, dict):
             lines = []
             for key, val in value.items():
@@ -127,9 +147,16 @@ class StatisticsStep(ttk.Frame):
             return "\n".join(lines)
         if isinstance(value, (list, tuple, set)):
             return "\n".join(StatisticsStep._format_result(item) for item in value)
+        if value is None:
+            return "—"
         return str(value)
 
-    def _build_calc_sheet(self, calc_name: str, df_columns, results: dict[str, float]):
+    def _add_plot(self, parent, fig):
+        canvas = FigureCanvasTkAgg(fig, master=parent)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill="both", expand=True)
+
+    def _build_calc_sheet(self, calc_name: str, df_columns, results: dict[str, Any], fig_plot):
         frame = ttk.Frame(self.nb, padding=4)
         self.nb.add(frame, text=str(calc_name))
         self.tabs_by_calc[calc_name] = frame
@@ -137,7 +164,7 @@ class StatisticsStep(ttk.Frame):
         cards = ttk.Frame(frame)
         cards.pack(fill="x", pady=(8, 0))
 
-        grid_length = 5
+        grid_length = 4
         for i in range(grid_length):
             cards.grid_columnconfigure(i, weight=1)
 
@@ -152,5 +179,9 @@ class StatisticsStep(ttk.Frame):
                     text=text,
                     justify="left",
                     anchor="w",
-                    style="Info.Label",
+                    style="Info.TLabel",
                 ).grid(row=0, column=0, sticky="nsew")
+        if fig_plot and calc_name in fig_plot and fig_plot[calc_name] is not None:
+            plot_frame = ttk.Frame(frame)
+            plot_frame.pack(fill="both", expand=True, pady=(10, 0))
+            self._add_plot(plot_frame, fig_plot[calc_name])
