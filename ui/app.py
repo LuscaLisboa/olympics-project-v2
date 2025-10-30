@@ -3,7 +3,7 @@ from tkinter import ttk
 
 import pandas
 
-from ui.steps.det_data_step import GetDataStep
+from ui.steps.get_data_step import GetDataStep
 from ui.steps.statistical_step import StatisticsStep
 from ui.theme import theme_manager
 from ui.theme.theme_manager import ThemeManager

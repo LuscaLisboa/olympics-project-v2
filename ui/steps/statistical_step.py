@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from typing import Any
+from typing import Any, Mapping
 
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -81,7 +81,9 @@ class StatisticsStep(ttk.Frame):
             self._notify("No data loaded.")
             return
 
-        numeric_df = self.df.select_dtypes(include="number").drop(columns="ID")
+        numeric_df = self.df.select_dtypes(include="number").drop(
+            columns=["ID"], errors="ignore"
+        )
         numeric_columns = list(numeric_df.columns)
 
         if len(numeric_columns) == 0:
@@ -99,44 +101,50 @@ class StatisticsStep(ttk.Frame):
             return
 
         calc_results: dict[str, Any] = {}
-        plot_fig: any = {}
+        plots_by_calc: dict[str, list] = {}
         for calc in self._calcs:
             match calc:
                 case "Total":
                     calc_results[calc] = total_calc(numeric_df)
-                    plot_fig[calc] = total_plot(numeric_df)
+                    for c in numeric_columns:
+                        plots_by_calc.setdefault(calc, []).append(total_plot(numeric_df, c))
                 case "Average":
                     calc_results[calc] = average_calc(numeric_df)
-                    plot_fig[calc] = histogram_plot(numeric_df)
+                    plots_by_calc[calc] = histogram_plot(numeric_df)
                 case "Median":
                     calc_results[calc] = median_calc(numeric_df)
-                    plot_fig[calc] = {}
+                    plots_by_calc[calc] = {}
                 case "Mode":
                     calc_results[calc] = mode_calc(numeric_df)
-                    plot_fig[calc] = {}
+                    plots_by_calc[calc] = {}
                 case "Variance":
                     calc_results[calc] = variance_calc(numeric_df)
-                    plot_fig[calc] = {}
+                    plots_by_calc[calc] = {}
                 case "Standard Deviation":
                     calc_results[calc] = std_deviation_calc(numeric_df)
-                    plot_fig[calc] = {}
+                    plots_by_calc[calc] = {}
                 case "Covariance":
                     calc_results[calc] = covariance_calc(numeric_df)
-                    plot_fig[calc] = {}
+                    plots_by_calc[calc] = {}
                 case "Correlation":
                     calc_results[calc] = correlation_calc(numeric_df)
-                    plot_fig[calc] = {}
+                    plots_by_calc[calc] = {}
                 case _:
                     calc_results[calc] = {}
 
         for calc in self._calcs:
-            self._build_calc_sheet(calc, numeric_columns, calc_results.get(calc, {}), plot_fig)
+            self._build_calc_sheet(
+                calc,
+                numeric_columns,
+                calc_results.get(calc, {}),
+                plots_by_calc.get(calc),
+            )
 
         self._notify(f"{len(numeric_columns)} numeric columns loaded.")
 
     @staticmethod
     def _format_result(value: Any) -> str:
-        if isinstance(value, dict):
+        if isinstance(value, Mapping):
             lines = []
             for key, val in value.items():
                 rendered = StatisticsStep._format_result(val)
@@ -151,12 +159,33 @@ class StatisticsStep(ttk.Frame):
             return "—"
         return str(value)
 
-    def _add_plot(self, parent, fig):
-        canvas = FigureCanvasTkAgg(fig, master=parent)
-        canvas.draw()
-        canvas.get_tk_widget().pack(fill="both", expand=True)
+    def _add_plot(self, parent, figs):
+        if figs is None:
+            return
+        if not isinstance(figs, (list, tuple)):
+            figs = [figs]
 
-    def _build_calc_sheet(self, calc_name: str, df_columns, results: dict[str, Any], fig_plot):
+        rows = (len(figs) + 1)
+        for i in range(rows):
+            parent.grid_rowconfigure(i, weight=1)
+        for j in range(2):
+            parent.grid_columnconfigure(j, weight=1)
+
+        for idx, fig in enumerate(figs):
+            if fig is None:
+                continue
+            r, c = divmod(idx, 2)
+            canvas = FigureCanvasTkAgg(fig, master=parent)
+            canvas.draw()
+            canvas.get_tk_widget().grid(row=r, column=c, sticky="nsew", padx=8, pady=8)
+
+    def _build_calc_sheet(
+            self,
+            calc_name: str,
+            df_columns,
+            results: Mapping[str, Any] | None,
+            figure: Any,
+    ):
         frame = ttk.Frame(self.nb, padding=4)
         self.nb.add(frame, text=str(calc_name))
         self.tabs_by_calc[calc_name] = frame
@@ -172,7 +201,7 @@ class StatisticsStep(ttk.Frame):
             r, c = divmod(idx, grid_length)
             lf = ttk.LabelFrame(cards, text=col)
             lf.grid(row=r, column=c, sticky="nsew")
-            if col in results:
+            if results and col in results:
                 text = self._format_result(results[col])
                 ttk.Label(
                     lf,
@@ -181,7 +210,7 @@ class StatisticsStep(ttk.Frame):
                     anchor="w",
                     style="Info.TLabel",
                 ).grid(row=0, column=0, sticky="nsew")
-        if fig_plot and calc_name in fig_plot and fig_plot[calc_name] is not None:
+        if figure is not None:
             plot_frame = ttk.Frame(frame)
             plot_frame.pack(fill="both", expand=True, pady=(10, 0))
-            self._add_plot(plot_frame, fig_plot[calc_name])
+            self._add_plot(plot_frame, figure)

@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="258052f7-9f03-41bd-86c1-efb3f8a5e82a" name="Changes" comment="setup - df - preview">
+    <list default="true" id="258052f7-9f03-41bd-86c1-efb3f8a5e82a" name="Changes" comment="plot - ui - partial">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/io_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/io_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/statistical_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/statistical_plot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/steps/det_data_step.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/steps/get_data_step.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/steps/statistical_step.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/steps/statistical_step.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -127,8 +127,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.statistical_plot" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -184,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761696184465</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="plot - ui - partial">
+      <option name="closed" value="true" />
+      <created>1761853092232</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1761853092232</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -231,7 +239,8 @@
     <MESSAGE value=".gitignore - readme.md" />
     <MESSAGE value="step2 - ui" />
     <MESSAGE value="step2 - ui - v.1" />
-    <option name="LAST_COMMIT_MESSAGE" value="step2 - ui - v.1" />
+    <MESSAGE value="plot - ui - partial" />
+    <option name="LAST_COMMIT_MESSAGE" value="plot - ui - partial" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/olympics_project_v2$main.coverage" NAME="main Coverage Results" MODIFIED="1761697514233" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

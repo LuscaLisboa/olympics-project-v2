@@ -9,18 +9,21 @@ def _numeric_only(df: pd.DataFrame) -> DataFrame | None:
         return df
     return df.select_dtypes(include="number")
 
-def total_plot(df: DataFrame):
-    """Return a Fig containing only numeric columns."""
-    numeric_df = _numeric_only(df)
+def total_plot(df: DataFrame, column: str):
+    """Group identical values & show count (x=value, y=count) in scatter plot."""
+    numeric_df = df.select_dtypes(include="number")
 
-    totals = numeric_df.sum(numeric_only=True)
+    all_values = numeric_df[column].stack()
 
-    fig, ax = plt.subplots()
-    ax.bar(totals.index, totals.values, edgecolor="black")
-    ax.set_title("Total")
-    ax.set_xlabel("Columns")
-    ax.set_ylabel("Values")
-    ax.tick_params(axis="y", rotation=45)
+    value_counts = all_values.value_counts().sort_index()
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.scatter(value_counts.index, value_counts.values, color="steelblue", alpha=0.7, edgecolor="black")
+
+    ax.set_title(column.upper())
+    ax.set_xlabel(all_values)
+    ax.set_ylabel("count")
+    ax.grid(True, linestyle="--", alpha=0.4)
 
     plt.tight_layout()
     return fig
@@ -30,7 +33,7 @@ def histogram_plot(df: DataFrame):
     numeric_df = _numeric_only(df)
 
     fig, ax = plt.subplots()
-    ax.hist(numeric_df.dropna(), bins=10, edgecolor="black")
+    ax.hist(numeric_df.dropna(), edgecolor="black")
     ax.set_title("Histogram")
     ax.set_xlabel("Columns")
     ax.set_ylabel("Values")
