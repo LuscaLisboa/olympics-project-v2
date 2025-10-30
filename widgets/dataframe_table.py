@@ -4,20 +4,21 @@ from tkinter import ttk
 import pandas as pd
 
 class DataFrameTable(ttk.Frame):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, theme_manager, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.theme_manager = theme_manager
         self.tree = None
+
         self._build()
+        self.theme_manager.add_observer(self._on_theme_changed)
 
     def _build(self):
-        self.tree = ttk.Treeview(self, show="headings")
-        vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview)
-        hsb = ttk.Scrollbar(self, orient="horizontal", command=self.tree.xview)
-        self.tree.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        self.tree = ttk.Treeview(self, show="headings", style="Treeview")
+        vsb = ttk.Scrollbar(self, orient="vertical", command=self.tree.yview, style="Vertical.TScrollbar")
+        self.tree.configure(yscrollcommand=vsb.set)
 
         self.tree.grid(row=0, column=0, sticky="nsew")
         vsb.grid(row=0, column=1, sticky="ns")
-        hsb.grid(row=1, column=0, sticky="ew")
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
@@ -47,3 +48,10 @@ class DataFrameTable(ttk.Frame):
                     batch.clear()
             for r in batch:
                 self.tree.insert("", "end", values=r)
+
+    def _update_canvas_color(self, canvas):
+        if self.theme_manager:
+            canvas.configure(bg=self.theme_manager.get_color("bg"))
+
+    def _on_theme_changed(self):
+        self._update_canvas_color(self.canvas)

@@ -3,26 +3,42 @@ from tkinter import ttk
 
 import pandas
 
-from ui.steps.preview_step import GetDataStep
+from ui.steps.det_data_step import GetDataStep
 from ui.steps.statistical_step import StatisticsStep
+from ui.theme import theme_manager
+from ui.theme.theme_manager import ThemeManager
 
 
 class App:
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
+        self.theme_manager = ThemeManager(root, initial_theme="light")
         self._build()
 
     def _build(self):
-        container = tk.Frame(self.root, padx=8, pady=8)
+        container = tk.Frame(self.root,bg=self.theme_manager.get_color("bg"))
         container.pack(fill="both", expand=True)
 
-        title = ttk.Label(container, text="Olympics Analysis", font=("Segoe UI", 16, "bold"))
-        title.pack(anchor="w", pady=(0,8))
+        top_bar = ttk.Frame(container)
+        top_bar.pack(fill="x")
 
-        self.nb = ttk.Notebook(container)
+        title = ttk.Label(top_bar, text="Olympics Analysis", style="TLabel")
+        title.grid(column=0, row=0, sticky="w")
+
+        toggle_btn = ttk.Button(
+            top_bar,
+            text="Theme",
+            command=self.theme_manager.cycle_theme,
+            style="TButton",
+        )
+        toggle_btn.grid(row=0, column=1, sticky="e")
+
+        top_bar.columnconfigure(0, weight=1)
+
+        self.nb = ttk.Notebook(container, style="TNotebook")
         self.nb.pack(fill="both", expand=True)
 
-        self.step1 = GetDataStep(self.nb)
+        self.step1 = GetDataStep(self.nb, theme_manager=self.theme_manager)
         self.nb.add(self.step1, text="1 - View File")
 
         self.step2 = StatisticsStep(

@@ -43,9 +43,9 @@ class StatisticsStep(ttk.Frame):
     def _build(self):
         top = ttk.Frame(self)
         top.pack(fill="x", pady=(0,8))
-        ttk.Label(top, textvariable=self.label).pack(side="left", padx=12)
+        ttk.Label(top, textvariable=self.label, style="Info.Label").pack(side="left", padx=12)
 
-        self.nb = ttk.Notebook(self)
+        self.nb = ttk.Notebook(self, style="TNotebook")
         self.nb.pack(fill="both", expand=True)
 
         self._notify(f"{len(self.df.columns)} columns loaded.")
@@ -64,6 +64,7 @@ class StatisticsStep(ttk.Frame):
                 text="Load a file in Step 1 to view available columns.",
                 anchor="center",
                 justify="center",
+                style="Info.TLabel"
             ).pack(expand=True)
             self.nb.add(frame, text="Info")
             self._notify("No data loaded.")
@@ -113,8 +114,23 @@ class StatisticsStep(ttk.Frame):
 
         self._notify(f"{len(numeric_columns)} numeric columns loaded.")
 
+    @staticmethod
+    def _format_result(value):
+        if isinstance(value, dict):
+            lines = []
+            for key, val in value.items():
+                rendered = StatisticsStep._format_result(val)
+                if "\n" in rendered:
+                    lines.append(f"{key}:\n{rendered}")
+                else:
+                    lines.append(f"{key}: {rendered}")
+            return "\n".join(lines)
+        if isinstance(value, (list, tuple, set)):
+            return "\n".join(StatisticsStep._format_result(item) for item in value)
+        return str(value)
+
     def _build_calc_sheet(self, calc_name: str, df_columns, results: dict[str, float]):
-        frame = ttk.Frame(self.nb, padding=8)
+        frame = ttk.Frame(self.nb, padding=4)
         self.nb.add(frame, text=str(calc_name))
         self.tabs_by_calc[calc_name] = frame
 
@@ -127,9 +143,14 @@ class StatisticsStep(ttk.Frame):
 
         for idx, col in enumerate(df_columns):
             r, c = divmod(idx, grid_length)
-            lf = ttk.LabelFrame(cards, text=col, padding=10)
-            lf.grid(row=r, column=c, sticky="nsew", padx=6, pady=6)
+            lf = ttk.LabelFrame(cards, text=col)
+            lf.grid(row=r, column=c, sticky="nsew")
             if col in results:
-                ttk.Label(lf, text=results[col], font=("Segoe UI", 14, "bold")).grid(
-                    row=0, column=0, sticky="nsew"
-                )
+                text = self._format_result(results[col])
+                ttk.Label(
+                    lf,
+                    text=text,
+                    justify="left",
+                    anchor="w",
+                    style="Info.Label",
+                ).grid(row=0, column=0, sticky="nsew")
