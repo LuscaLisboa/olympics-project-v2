@@ -5,7 +5,6 @@ import pandas
 
 from ui.steps.get_data_step import GetDataStep
 from ui.steps.statistical_step import StatisticsStep
-from ui.theme import theme_manager
 from ui.theme.theme_manager import ThemeManager
 
 
@@ -38,10 +37,10 @@ class App:
         self.nb = ttk.Notebook(container, style="TNotebook")
         self.nb.pack(fill="both", expand=True)
 
-        self.step1 = GetDataStep(self.nb, theme_manager=self.theme_manager)
+        self.step1 = GetDataStep(self.nb, self.theme_manager)
         self.nb.add(self.step1, text="1 - View File")
 
-        self.step2 = StatisticsStep(self.nb, self.step1.df if self.step1.df else pandas.DataFrame(), self.step1.file_label_var)
+        self.step2 = StatisticsStep(self.nb, self.step1.df if self.step1.df else pandas.DataFrame(), self.step1.file_label_var, theme_manager=self.theme_manager)
         self.nb.add(self.step2, text="2 - Statistics")
         self.step1.on_data_loaded = self._on_data_loaded
 

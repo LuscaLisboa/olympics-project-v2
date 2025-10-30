@@ -5,6 +5,7 @@ from typing import Any, Mapping
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+from services import statistical_plot
 from services.statistical_calc import (
     average_calc,
     correlation_calc,
@@ -15,8 +16,6 @@ from services.statistical_calc import (
     total_calc,
     variance_calc,
 )
-from services.statistical_plot import total_plot, histogram_plot
-
 
 def _calc():
     return [
@@ -32,9 +31,9 @@ def _calc():
 
 
 class StatisticsStep(ttk.Frame):
-    def __init__(self, parent, df: pd.DataFrame | None, label, *args, **kwargs):
+    def __init__(self, parent, df: pd.DataFrame | None, label, theme_manager, *args, **kwargs):
         super().__init__(parent, *args, **kwargs, padding=8)
-
+        self.theme_manager = theme_manager
         if not isinstance(label, tk.StringVar):
             label = tk.StringVar(value="")
         self.label = label
@@ -44,8 +43,11 @@ class StatisticsStep(ttk.Frame):
         self.tabs_by_calc: dict[str, ttk.Frame] = {}
         self._calcs = _calc()
 
+        self.statisticalPlot = statistical_plot.StatisticalPlot(self.df, self.theme_manager)
+
         self._build()
         self.update_dataframe(self.df)
+        self.theme_manager.add_observer(self._on_theme_changed)
 
     def _notify(self, msg: str):
         if self.on_status:
@@ -107,10 +109,10 @@ class StatisticsStep(ttk.Frame):
                 case "Total":
                     calc_results[calc] = total_calc(numeric_df)
                     for c in numeric_columns:
-                        plots_by_calc.setdefault(calc, []).append(total_plot(numeric_df, c))
+                        plots_by_calc.setdefault(calc, []).append(self.statisticalPlot.total_plot(c))
                 case "Average":
                     calc_results[calc] = average_calc(numeric_df)
-                    plots_by_calc[calc] = histogram_plot(numeric_df)
+                    plots_by_calc[calc] = self.statisticalPlot.histogram_plot()
                 case "Median":
                     calc_results[calc] = median_calc(numeric_df)
                     plots_by_calc[calc] = {}
@@ -165,7 +167,7 @@ class StatisticsStep(ttk.Frame):
         if not isinstance(figs, (list, tuple)):
             figs = [figs]
 
-        rows = (len(figs) + 1)
+        rows = (len(figs) + 2)
         for i in range(rows):
             parent.grid_rowconfigure(i, weight=1)
         for j in range(2):
@@ -214,3 +216,10 @@ class StatisticsStep(ttk.Frame):
             plot_frame = ttk.Frame(frame)
             plot_frame.pack(fill="both", expand=True, pady=(10, 0))
             self._add_plot(plot_frame, figure)
+
+    def _update_canvas_color(self, canvas):
+        if self.theme_manager:
+            canvas.configure(bg=self.theme_manager.get_color("bg"))
+
+    def _on_theme_changed(self):
+        self._update_canvas_color(self.canvas)

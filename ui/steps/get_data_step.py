@@ -22,8 +22,6 @@ class GetDataStep(ttk.Frame):
         self.theme_manager.add_observer(self._on_theme_changed)
 
     def _build(self):
-        colors = self.theme_manager.get_all_colors()
-
         bar = ttk.Frame(self, style="TFrame")
         bar.pack(fill="x", pady=(0,8))
 
@@ -43,8 +41,6 @@ class GetDataStep(ttk.Frame):
 
         self.btn_next = ttk.Button(bar2, text="Next ▶", command=self._next_page, state="disabled", style="Secondary.TButton")
         self.btn_next.pack(side="right")
-
-        print(f"{self.theme_manager.get_color('Secondary.TButton')}")
 
         ttk.Label(bar2, textvariable=self.page_info, style="Subtitle.TLabel").pack(side="left", padx=12)
 

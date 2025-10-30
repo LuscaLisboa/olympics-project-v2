@@ -9,35 +9,50 @@ def _numeric_only(df: pd.DataFrame) -> DataFrame | None:
         return df
     return df.select_dtypes(include="number")
 
-def total_plot(df: DataFrame, column: str):
-    """Group identical values & show count (x=value, y=count) in scatter plot."""
-    numeric_df = df.select_dtypes(include="number")
+class StatisticalPlot:
+    def __init__(self, df: DataFrame, theme_manager):
+        super().__init__()
+        self.theme_manager = theme_manager
+        self.df = df
 
-    all_values = numeric_df[column].stack()
+        self.theme_manager.add_observer(self._on_theme_changed)
 
-    value_counts = all_values.value_counts().sort_index()
+    def total_plot(self, column: str):
+        """Group identical values & show count (x=value, y=count) in scatter plot."""
+        numeric_df = _numeric_only(self.df)
 
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.scatter(value_counts.index, value_counts.values, color="steelblue", alpha=0.7, edgecolor="black")
+        all_values = numeric_df[column]
 
-    ax.set_title(column.upper())
-    ax.set_xlabel(all_values)
-    ax.set_ylabel("count")
-    ax.grid(True, linestyle="--", alpha=0.4)
+        value_counts = all_values.value_counts().sort_index()
 
-    plt.tight_layout()
-    return fig
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.scatter(value_counts.index, value_counts.values, color="steelblue", alpha=0.7, edgecolor="black")
 
-def histogram_plot(df: DataFrame):
-    """Return a Fig containing only numeric columns."""
-    numeric_df = _numeric_only(df)
+        ax.set_title(column.upper(), fontsize=10)
+        ax.set_xlabel("", color="red")
+        ax.set_ylabel("Quantity")
+        ax.grid(True, linestyle="--", alpha=0.4)
 
-    fig, ax = plt.subplots()
-    ax.hist(numeric_df.dropna(), edgecolor="black")
-    ax.set_title("Histogram")
-    ax.set_xlabel("Columns")
-    ax.set_ylabel("Values")
-    ax.tick_params(axis="y", rotation=45)
+        plt.tight_layout()
+        return fig
 
-    plt.tight_layout()
-    return fig
+    def histogram_plot(self):
+        """Return a Fig containing only numeric columns."""
+        numeric_df = _numeric_only(self.df)
+
+        fig, ax = plt.subplots()
+        ax.hist(numeric_df.dropna(), edgecolor="black")
+        ax.set_title("Histogram")
+        ax.set_xlabel("Columns")
+        ax.set_ylabel("Values")
+        ax.tick_params(axis="y", rotation=45)
+
+        plt.tight_layout()
+        return fig
+
+    def _update_canvas_color(self, canvas):
+        if self.theme_manager:
+            canvas.configure(bg=self.theme_manager.get_color("bg"))
+
+    def _on_theme_changed(self):
+        self._update_canvas_color(self.canvas)
