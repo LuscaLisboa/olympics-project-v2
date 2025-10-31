@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="258052f7-9f03-41bd-86c1-efb3f8a5e82a" name="Changes" comment="plot class - ui - partial">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/statistical_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/statistical_plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/steps/get_data_step.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/steps/get_data_step.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/steps/statistical_step.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/steps/statistical_step.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/theme/theme_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/theme/theme_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/widgets/dataframe_table.py" beforeDir="false" afterPath="$PROJECT_DIR$/widgets/dataframe_table.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,12 +32,12 @@
     &quot;assignee&quot;: &quot;LuscaLisboa&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/LuscaLisboa/olympics-project-v2.git&quot;,
-    &quot;accountId&quot;: &quot;cedd6275-4c3f-4070-8482-55fd4894d809&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/LuscaLisboa/olympics-project-v2.git",
+    "accountId": "ec741306-0f81-4bb7-ac2a-78ee83af90c0"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -138,8 +136,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-PY-252.27397.106" />
-        <option value="bundled-python-sdk-4e2b1448bda8-9a97661f3031-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.27397.106" />
+        <option value="bundled-python-sdk-e0ed3721d81e-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.25410.159" />
       </set>
     </attachedChunks>
   </component>

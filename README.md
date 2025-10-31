@@ -8,7 +8,7 @@ Aplicativo desktop em Tkinter para explorar dados históricos dos Jogos Olímpic
 - Alternância de tema claro/escuro aplicada globalmente.
 
 ## Próximos incrementos
-- Incluir visualizações gráficas em cada aba do Step 2, reutilizando o espaço dos cards para exibir os indicadores acompanhados de gráficos (ex.: histogramas, dispersões e correlações) de cada coluna ou combinação relevante.
+- Incluir visualizações gráficas em cada aba do Step 2, reutilizando o espaço dos cards para exibir os indicadores acompanhados de gráficos (histograma, percentil, dispersão, distribuição, correlação) de cada coluna ou combinação relevante.
 
 ## Execução
 ```bash

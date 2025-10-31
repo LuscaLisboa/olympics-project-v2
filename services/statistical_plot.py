@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Tuple
 
+import random
+
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
@@ -12,8 +15,12 @@ X_LABEL = {
     "AGE": "years old",
     "HEIGHT": "centimeters",
     "WEIGHT": "kilograms",
-    "YEAR": "game year"
+    "YEAR": "game year",
 }
+
+def _column_label(column: str) -> str:
+    """Return a human friendly label for ``column``."""
+    return X_LABEL.get(column.upper(), column.title())
 
 def _numeric_only(df: pd.DataFrame | None) -> DataFrame | None:
         """Return a DataFrame containing only numeric columns."""
@@ -27,7 +34,7 @@ class StatisticalPlot:
     def __init__(self, df: DataFrame | None, theme_manager: Any | None):
         self.theme_manager = theme_manager
         self.df: DataFrame = df if df is not None else pd.DataFrame()
-        self.figures = []
+        self.figures: list[tuple[Figure, Axes]] = []
 
         if self.theme_manager is not None:
             self.theme_manager.add_observer(self._on_theme_changed)
@@ -36,6 +43,7 @@ class StatisticalPlot:
     def set_dataframe(self, df: DataFrame | None) -> None:
         """Update the DataFrame used to generate the plots."""
         self.df = df if df is not None else pd.DataFrame()
+        self.figures.clear()
 
     def total_plot(self, column: str) -> Figure | None:
         """Create a scatter plot counting the occurrences of *column*."""
@@ -53,11 +61,11 @@ class StatisticalPlot:
         self._apply_theme_to_figure(fig, ax)
         self.figures.append((fig, ax))
 
-        ax.scatter(value_counts.index,value_counts.values)
+        ax.scatter(value_counts.index, value_counts.values, alpha=0.8)
         ax.scatter(value_counts.index, value_counts.values)
 
         ax.set_title(column.upper())
-        ax.set_xlabel(X_LABEL.get(column))
+        ax.set_xlabel(_column_label(column))
         ax.set_ylabel("Quantity")
         ax.grid(True, linestyle="--")
 
@@ -74,14 +82,92 @@ class StatisticalPlot:
         if all_values.empty:
             return None
 
+        fig, ax = self._create_figure()
+        self._apply_theme_to_figure(fig, ax)
+        self.figures.append((fig, ax))
+
+        ax.hist(all_values.dropna(), alpha=0.5)
+        ax.set_title(column.upper())
+        ax.set_xlabel(_column_label(column))
+        ax.set_ylabel("Values")
+        ax.grid(True, linestyle="--")
+
+        plt.tight_layout()
+        return fig
+
+    def percentile_plot(self, column: str) -> Figure | None:
+        """Create a percentile plot of *column*."""
+        numeric_df = _numeric_only(self.df)
+        if column not in numeric_df.columns:
+            return None
+
+        all_values = numeric_df[column].dropna()
+        if all_values.empty:
+            return None
+
+        percentiles = np.linspace(0, 100, 101)
+        values = np.percentile(all_values, percentiles)
+
         fig, ax = plt.subplots()
         self._apply_theme_to_figure(fig, ax)
         self.figures.append((fig, ax))
 
-        ax.hist(all_values.dropna())
+        ax.plot([p * 100 for p in percentiles], values)
         ax.set_title(column.upper())
-        ax.set_xlabel(X_LABEL.get(column))
-        ax.set_ylabel("Values")
+        ax.set_xlabel("Percentile %")
+        ax.set_ylabel(column)
+        ax.grid(True, linestyle="--")
+
+        plt.tight_layout()
+        return fig
+
+    def dispersion_plot(self, x_column: str, y_column: str) -> Figure | None:
+        """Create a dispersion (scatter) plot for two numeric columns."""
+        numeric_df = _numeric_only(self.df)
+        if numeric_df.empty:
+            return None
+
+        if x_column not in numeric_df.columns or y_column not in numeric_df.columns:
+            return None
+
+        values = numeric_df[[x_column, y_column]].dropna()
+        if values.empty:
+            return None
+
+        sample_size = 10000
+        if len(values) > sample_size:
+            values = values.sample(sample_size, random_state=42)
+
+        fig, ax = self._create_figure()
+        self._apply_theme_to_figure(fig, ax)
+        self.figures.append((fig, ax))
+
+        ax.scatter(values[x_column], values[y_column], alpha=0.1)
+        ax.set_title(f"{x_column.upper()} × {y_column.upper()}")
+        ax.set_xlabel(_column_label(x_column))
+        ax.set_ylabel(_column_label(y_column))
+        ax.grid(True, linestyle="--")
+
+        plt.tight_layout()
+        return fig
+
+    def distribution_plot(self, column: str) -> Figure | None:
+        """Create a dispersion (scatter) plot for two numeric columns."""
+        numeric_df = _numeric_only(self.df)
+        if numeric_df.empty:
+            return None
+
+        if column not in numeric_df.columns:
+            return None
+
+        fig, ax = self._create_figure()
+        self._apply_theme_to_figure(fig, ax)
+        self.figures.append((fig, ax))
+
+        ax.hist(numeric_df[column], bins=30, alpha=0.5)
+        ax.set_title(f"{column.upper()}")
+        ax.set_xlabel(_column_label(column))
+        ax.set_ylabel("Count")
         ax.grid(True, linestyle="--")
 
         plt.tight_layout()

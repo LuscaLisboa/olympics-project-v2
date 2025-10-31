@@ -105,7 +105,7 @@ class StatisticsStep(ttk.Frame):
             return
 
         calc_results: dict[str, Any] = {}
-        plots_by_calc: dict[str, list] = {}
+        plots_by_calc: dict[str, Any] = {}
         for calc in self._calcs:
             match calc:
                 case "Total":
@@ -122,22 +122,28 @@ class StatisticsStep(ttk.Frame):
                             plots_by_calc.setdefault(calc, []).append(fig)
                 case "Median":
                     calc_results[calc] = median_calc(numeric_df)
-                    plots_by_calc[calc] = {}
+                    for c in numeric_columns:
+                        fig = self.statisticalPlot.percentile_plot(c)
+                        if fig is not None:
+                            plots_by_calc.setdefault(calc, []).append(fig)
                 case "Mode":
                     calc_results[calc] = mode_calc(numeric_df)
-                    plots_by_calc[calc] = {}
+                    for c in numeric_columns:
+                        fig = self.statisticalPlot.dispersion_plot(c, "Year")
+                        if fig is not None:
+                            plots_by_calc.setdefault(calc, []).append(fig)
                 case "Variance":
                     calc_results[calc] = variance_calc(numeric_df)
-                    plots_by_calc[calc] = {}
+                    for c in numeric_columns:
+                        fig = self.statisticalPlot.distribution_plot(c)
+                        if fig is not None:
+                            plots_by_calc.setdefault(calc, []).append(fig)
                 case "Standard Deviation":
                     calc_results[calc] = std_deviation_calc(numeric_df)
-                    plots_by_calc[calc] = {}
                 case "Covariance":
                     calc_results[calc] = covariance_calc(numeric_df)
-                    plots_by_calc[calc] = {}
                 case "Correlation":
                     calc_results[calc] = correlation_calc(numeric_df)
-                    plots_by_calc[calc] = {}
                 case _:
                     calc_results[calc] = {}
 
