@@ -66,6 +66,8 @@ class StatisticsStep(ttk.Frame):
     def update_dataframe(self, df: pd.DataFrame | None):
         self.df = df if df is not None else pd.DataFrame()
 
+        self.statisticalPlot.set_dataframe(self.df)
+
         for tab_id in self.nb.tabs():
             self.nb.forget(tab_id)
         self.tabs_by_calc.clear()
@@ -109,10 +111,15 @@ class StatisticsStep(ttk.Frame):
                 case "Total":
                     calc_results[calc] = total_calc(numeric_df)
                     for c in numeric_columns:
-                        plots_by_calc.setdefault(calc, []).append(self.statisticalPlot.total_plot(c))
+                        fig = self.statisticalPlot.total_plot(c)
+                        if fig is not None:
+                            plots_by_calc.setdefault(calc, []).append(fig)
                 case "Average":
                     calc_results[calc] = average_calc(numeric_df)
-                    plots_by_calc[calc] = self.statisticalPlot.histogram_plot()
+                    for c in numeric_columns:
+                        fig = self.statisticalPlot.histogram_plot(c)
+                        if fig is not None:
+                            plots_by_calc.setdefault(calc, []).append(fig)
                 case "Median":
                     calc_results[calc] = median_calc(numeric_df)
                     plots_by_calc[calc] = {}
@@ -179,7 +186,7 @@ class StatisticsStep(ttk.Frame):
             r, c = divmod(idx, 2)
             canvas = FigureCanvasTkAgg(fig, master=parent)
             canvas.draw()
-            canvas.get_tk_widget().grid(row=r, column=c, sticky="nsew", padx=8, pady=8)
+            canvas.get_tk_widget().grid(row=r, column=c)
 
     def _build_calc_sheet(
             self,
@@ -217,9 +224,6 @@ class StatisticsStep(ttk.Frame):
             plot_frame.pack(fill="both", expand=True, pady=(10, 0))
             self._add_plot(plot_frame, figure)
 
-    def _update_canvas_color(self, canvas):
-        if self.theme_manager:
-            canvas.configure(bg=self.theme_manager.get_color("bg"))
-
-    def _on_theme_changed(self):
-        self._update_canvas_color(self.canvas)
+    def _on_theme_changed(self, *_args):
+        # Widget colors are handled via ttk styles.
+        pass

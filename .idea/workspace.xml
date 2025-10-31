@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="258052f7-9f03-41bd-86c1-efb3f8a5e82a" name="Changes" comment="plot - ui - partial">
+    <list default="true" id="258052f7-9f03-41bd-86c1-efb3f8a5e82a" name="Changes" comment="plot class - ui - partial">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/statistical_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/services/statistical_plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/steps/get_data_step.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/steps/get_data_step.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui/steps/statistical_step.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/steps/statistical_step.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/theme/theme_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/ui/theme/theme_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/widgets/dataframe_table.py" beforeDir="false" afterPath="$PROJECT_DIR$/widgets/dataframe_table.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,7 +195,15 @@
       <option name="project" value="LOCAL" />
       <updated>1761853092232</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="plot class - ui - partial">
+      <option name="closed" value="true" />
+      <created>1761865436811</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1761865436811</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -242,11 +251,12 @@
     <MESSAGE value="step2 - ui" />
     <MESSAGE value="step2 - ui - v.1" />
     <MESSAGE value="plot - ui - partial" />
-    <option name="LAST_COMMIT_MESSAGE" value="plot - ui - partial" />
+    <MESSAGE value="plot class - ui - partial" />
+    <option name="LAST_COMMIT_MESSAGE" value="plot class - ui - partial" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/olympics_project_v2$statistical_plot.coverage" NAME="statistical_plot Coverage Results" MODIFIED="1761863573672" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/services" />
-    <SUITE FILE_PATH="coverage/olympics_project_v2$main.coverage" NAME="main Coverage Results" MODIFIED="1761865216272" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/olympics_project_v2$main.coverage" NAME="main Coverage Results" MODIFIED="1761869450887" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/olympics_project_v2$statistics_step.coverage" NAME="statistics_step Coverage Results" MODIFIED="1761693198415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ui/steps" />
   </component>
 </project>

@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+from matplotlib import pyplot as plt
+
 from ui.theme.themes import ThemeType
 from ui.theme.themes import THEMES
 
@@ -151,6 +153,47 @@ class ThemeManager:
             arrowcolor=colors["text_secondary"],
         )
 
+        #   Plot
+        plt.rcParams.update({
+            # bg
+            "figure.facecolor": colors["bg"],
+            "axes.facecolor": colors["surface"],
+            "savefig.facecolor": colors["bg"],
+
+            # txt & labels
+            "text.color": colors["text_primary"],
+            "axes.labelcolor": colors["text_primary"],
+            "xtick.color": colors["text_primary"],
+            "ytick.color": colors["text_primary"],
+            "axes.edgecolor": colors["border"],
+
+            # lines & grids
+            "axes.grid": True,
+            "grid.color": colors["border"],
+            "grid.linestyle": "--",
+            "grid.alpha": 0.4,
+
+            # titles & fonts
+            "axes.titlesize": 12,
+            "axes.labelsize": 10,
+            "font.size": 9,
+            "font.family": "Segoe UI",
+
+            # lines & marks
+            "lines.linewidth": 2.0,
+            "lines.markersize": 5,
+            "lines.color": colors["primary"],
+
+            # legend
+            "legend.facecolor": colors["surface"],
+            "legend.edgecolor": colors["border"],
+            "legend.fontsize": 9,
+            "legend.frameon": True,
+
+            # Colormap
+            "image.cmap": "viridis",
+        })
+
         self._notify_observers()
 
     def get_color(self, color_key: str) -> str:
@@ -169,6 +212,12 @@ class ThemeManager:
                 callback(self.current_theme)
             except Exception as e:
                 print(f"Error notifying observers: {e}")
+
+        try:
+            import matplotlib.pyplot as plt
+            plt.draw_all()
+        except Exception as e:
+            print(f"Error notifying observers: {e}")
 
     def cycle_theme(self):
         """Cycle theme"""

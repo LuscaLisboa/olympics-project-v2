@@ -107,9 +107,6 @@ class GetDataStep(ttk.Frame):
         self.page_idx += 1
         self._render_page()
 
-    def _update_canvas_color(self, canvas):
-        if self.theme_manager:
-            canvas.configure(bg=self.theme_manager.get_color("bg"))
-
-    def _on_theme_changed(self):
-        self._update_canvas_color(self.canvas)
+    def _on_theme_changed(self, *_args):
+        # Widget colors are handled via ttk styles.
+        pass
