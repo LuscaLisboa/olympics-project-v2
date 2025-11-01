@@ -140,10 +140,20 @@ class StatisticsStep(ttk.Frame):
                             plots_by_calc.setdefault(calc, []).append(fig)
                 case "Standard Deviation":
                     calc_results[calc] = std_deviation_calc(numeric_df)
+                    for c in numeric_columns:
+                        fig = self.statisticalPlot.standard_deviation_plot(c, "Year")
+                        if fig is not None:
+                            plots_by_calc.setdefault(calc, []).append(fig)
                 case "Covariance":
                     calc_results[calc] = covariance_calc(numeric_df)
+                    fig = self.statisticalPlot.covariance_heatmap_plot()
+                    if fig is not None:
+                        plots_by_calc.setdefault(calc, []).append(fig)
                 case "Correlation":
                     calc_results[calc] = correlation_calc(numeric_df)
+                    fig = self.statisticalPlot.correlation_heatmap_plot()
+                    if fig is not None:
+                        plots_by_calc.setdefault(calc, []).append(fig)
                 case _:
                     calc_results[calc] = {}
 

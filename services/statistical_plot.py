@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Iterable, Tuple
-
-import random
+from typing import Any, Iterable, Tuple, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import networkx as nx
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from pandas import DataFrame
@@ -168,6 +168,77 @@ class StatisticalPlot:
         ax.set_title(f"{column.upper()}")
         ax.set_xlabel(_column_label(column))
         ax.set_ylabel("Count")
+        ax.grid(True, linestyle="--")
+
+        plt.tight_layout()
+        return fig
+
+    def standard_deviation_plot(self, column: str, group_col: str) -> Figure | None:
+        """Create a standard deviation plot for two numeric columns."""
+        numeric_df = _numeric_only(self.df)
+        if numeric_df.empty:
+            return None
+
+        if column not in numeric_df.columns:
+            return None
+
+        fig, ax = self._create_figure()
+        self._apply_theme_to_figure(fig, ax)
+        self.figures.append((fig, ax))
+
+        grouped = numeric_df.groupby(group_col)[column]
+        means = grouped.mean()
+        stds = grouped.std()
+
+        ax.fill_between(means.index, means - stds, means + stds, alpha=0.4, label='±1σ')
+        ax.set_title(f"{column.upper()} — Standard deviation by {group_col}")
+        ax.set_xlabel(_column_label(column))
+        ax.set_ylabel(_column_label(column))
+        ax.grid(True, linestyle="--")
+
+        plt.tight_layout()
+        return fig
+
+    def covariance_heatmap_plot(self) -> Figure | None:
+        """Create a covariance heatmap plot."""
+        numeric_df = _numeric_only(self.df).drop(
+            columns=["ID", "Year"], errors="ignore"
+        )
+        if numeric_df.empty:
+            return None
+
+        fig, ax = self._create_figure()
+        self._apply_theme_to_figure(fig, ax)
+        self.figures.append((fig, ax))
+
+        cov_matrix = numeric_df.cov()
+
+        sns.heatmap(cov_matrix, annot=True, cmap="coolwarm", center=0, fmt=".2f")
+
+        ax.set_title("Covariance Heatmap")
+        ax.grid(True, linestyle="--")
+
+        plt.tight_layout()
+        return fig
+
+    def correlation_heatmap_plot(self, method: str = "pearson") -> Figure | None:
+        """Create a correlation heatmap plot for two numeric columns."""
+        numeric_df = _numeric_only(self.df).drop(
+            columns=["ID", "Year"], errors="ignore"
+        )
+        if numeric_df.empty:
+            return None
+
+        fig, ax = self._create_figure()
+        self._apply_theme_to_figure(fig, ax)
+        self.figures.append((fig, ax))
+
+        corr = numeric_df.corr(method=method)
+
+        fig, ax = plt.subplots()
+        self._apply_theme_to_figure(fig, ax)
+        sns.heatmap(corr, annot=True, cmap="coolwarm", center=0, vmin=-1, vmax=1, ax=ax)
+        ax.set_title(f"Correlation Matrix ({method.title()})")
         ax.grid(True, linestyle="--")
 
         plt.tight_layout()
